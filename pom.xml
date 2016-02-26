@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>lutece-global-pom</artifactId>
+        <groupId>fr.paris.lutece.tools</groupId>
+        <version>3.0.3</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fr.paris.lutece.plugins</groupId>
+    <artifactId>module-ticketing-gru</artifactId>
+    <packaging>lutece-plugin</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Lutece Ticketing GRU module</name>
+
+    <repositories>
+        <repository>
+            <id>lutece</id>
+            <name>luteceRepository</name>
+            <url>http://dev.lutece.paris.fr/maven_repository</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>plugin-ticketing</artifactId>
+            <version>[1.0.0-SNAPSHOT,)</version>
+            <type>lutece-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>plugin-workflow</artifactId>
+            <version>[4.1.1,)</version>
+            <type>lutece-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>plugin-gru</artifactId>
+            <version>[0.1.0,)</version>
+            <type>lutece-plugin</type>
+        </dependency>
+        <!-- used for AbstractTicketingTask task dependency -->
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>module-workflow-ticketing</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>lutece-plugin</type>
+        </dependency>
+    </dependencies>
+
+	<properties>
+        <componentName>ticketing-gru</componentName>
+        <jiraProjectName>TICKETGRU</jiraProjectName>
+        <jiraComponentId>12927</jiraComponentId>
+    </properties>
+    
+    <scm>
+        <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-ticketing-gru.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-ticketing-gru.git</developerConnection>
+        <url>https://github.com/lutece-secteur-public/gru-module-ticketing-gru.git</url>
+      <tag>HEAD</tag>
+  </scm>
+    
+</project>
