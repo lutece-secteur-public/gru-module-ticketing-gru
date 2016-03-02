@@ -164,21 +164,34 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         {
             if ( StringUtils.isEmpty( strGuidFromTicket ) )
             {
-                // CASE : cid but no guid:  find customer info in GRU database => try to retrieve guid from customer
-                gruCustomer = CustomerService.instance(  ).getCustomerByCid( strCidFromTicket );
+                if ( StringUtils.isNumeric( strCidFromTicket ) )
+                {
+                    // CASE : cid but no guid:  find customer info in GRU database => try to retrieve guid from customer
+                    gruCustomer = CustomerService.instance(  ).getCustomerByCid( strCidFromTicket );
+                }
+                else
+                {
+                    AppLogService.error( "Provided customerId is not numeric: <" + strCidFromTicket + ">" );
+                }
 
                 if ( gruCustomer != null )
                 {
                     ticket.setGuid( gruCustomer.getAccountGuid(  ) );
                     TicketHome.update( ticket );
                 }
+                else
+                {
+                    AppLogService.info( "No guid found for user cid : <" + strCidFromTicket + ">" );
+                }
             }
         }
 
         return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_CREATE_CUSTOMER, Locale.FRENCH ),
-            ( gruCustomer != null ) ? String.valueOf( gruCustomer.getId(  ) )
-                                    : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID, Locale.FRENCH ),
-            ( ( gruCustomer != null ) && StringUtils.isNotEmpty( gruCustomer.getAccountGuid(  ) ) )
-            ? gruCustomer.getAccountGuid(  ) : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID, Locale.FRENCH ) );
+            ( StringUtils.isNotEmpty( ticket.getCustomerId(  ) ) ) ? String.valueOf( ticket.getCustomerId(  ) )
+                                                                   : I18nService.getLocalizedString( 
+                MESSAGE_UNKNOWN_ID, Locale.FRENCH ),
+            ( StringUtils.isNotEmpty( ticket.getGuid(  ) ) ) ? ticket.getGuid(  )
+                                                             : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID,
+                Locale.FRENCH ) );
     }
 }
