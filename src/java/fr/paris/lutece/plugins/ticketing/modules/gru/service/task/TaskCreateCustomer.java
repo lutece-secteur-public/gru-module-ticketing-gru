@@ -33,20 +33,18 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
+
+import fr.paris.lutece.plugins.costumerprovisionning.business.UserDTO;
+import fr.paris.lutece.plugins.costumerprovisionning.services.ProvisionningService;
 import fr.paris.lutece.plugins.gru.business.customer.Customer;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
-import fr.paris.lutece.plugins.ticketing.modules.gru.business.dto.UserDTO;
-import fr.paris.lutece.plugins.ticketing.modules.gru.service.CustomerService;
-import fr.paris.lutece.plugins.ticketing.modules.gru.service.UserInfoService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,19 +66,19 @@ public class TaskCreateCustomer extends AbstractTicketingTask
      * @param strUserId ID from Flux
      * @return the Customer
      */
-    private static Customer buildCustomer( UserDTO user, String strUserId )
-    {
-        Customer gruCustomer = new fr.paris.lutece.plugins.gru.business.customer.Customer(  );
-        gruCustomer.setFirstname( setEmptyValueWhenNullValue( user.getFirstname(  ) ) );
-        gruCustomer.setLastname( setEmptyValueWhenNullValue( user.getLastname(  ) ) );
-        gruCustomer.setEmail( setEmptyValueWhenNullValue( user.getEmail(  ) ) );
-        gruCustomer.setAccountGuid( setEmptyValueWhenNullValue( strUserId ) );
-        gruCustomer.setAccountLogin( setEmptyValueWhenNullValue( user.getEmail(  ) ) );
-        gruCustomer.setMobilePhone( setEmptyValueWhenNullValue( user.getTelephoneNumber(  ) ) );
-        gruCustomer.setExtrasAttributes( I18nService.getLocalizedString( MESSAGE_UNKNOWN_EXTRA_ATTRIBUTES, Locale.FRENCH ) );
-
-        return gruCustomer;
-    }
+//    private static Customer buildCustomer( UserDTO user, String strUserId )
+//    {
+//        Customer gruCustomer = new fr.paris.lutece.plugins.gru.business.customer.Customer(  );
+//        gruCustomer.setFirstname( setEmptyValueWhenNullValue( user.getFirstname(  ) ) );
+//        gruCustomer.setLastname( setEmptyValueWhenNullValue( user.getLastname(  ) ) );
+//        gruCustomer.setEmail( setEmptyValueWhenNullValue( user.getEmail(  ) ) );
+//        gruCustomer.setAccountGuid( setEmptyValueWhenNullValue( strUserId ) );
+//        gruCustomer.setAccountLogin( setEmptyValueWhenNullValue( user.getEmail(  ) ) );
+//        gruCustomer.setMobilePhone( setEmptyValueWhenNullValue( user.getTelephoneNumber(  ) ) );
+//        gruCustomer.setExtrasAttributes( I18nService.getLocalizedString( MESSAGE_UNKNOWN_EXTRA_ATTRIBUTES, Locale.FRENCH ) );
+//
+//        return gruCustomer;
+//    }
 
     /**
      * return a userDTO from ticket value
@@ -89,6 +87,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
      */
     private static UserDTO buildUserFromTicket( Ticket ticket )
     {
+    	
         UserDTO user = null;
 
         if ( ticket != null )
@@ -110,10 +109,10 @@ public class TaskCreateCustomer extends AbstractTicketingTask
      * @param value value to test
      * @return empty string if value is null
      */
-    private static String setEmptyValueWhenNullValue( String value )
-    {
-        return ( StringUtils.isEmpty( value ) ) ? "" : value;
-    }
+//    private static String setEmptyValueWhenNullValue( String value )
+//    {
+//        return ( StringUtils.isEmpty( value ) ) ? "" : value;
+//    }
 
     @Override
     public String getTitle( Locale locale )
@@ -127,64 +126,80 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
 
         fr.paris.lutece.plugins.gru.business.customer.Customer gruCustomer = null;
-        UserDTO userDto = null;
+        fr.paris.lutece.plugins.costumerprovisionning.business.UserDTO userDto =  buildUserFromTicket( ticket );
 
         String strCidFromTicket = ticket.getCustomerId(  );
         String strGuidFromTicket = ticket.getGuid(  );
-
-        // CASE no cid
-        if ( StringUtils.isEmpty( strCidFromTicket ) )
-        {
-            if ( !StringUtils.isEmpty( strGuidFromTicket ) )
-            {
-                //if guid is provided => we try to retrieve linked customer
-                gruCustomer = CustomerService.instance(  ).getCustomerByGuid( ticket.getGuid(  ) );
-                userDto = UserInfoService.instance(  ).getUserInfo( strGuidFromTicket );
-            }
-
-            if ( gruCustomer == null )
-            {
-                //customer is unknown / not found => we create it
-                if ( userDto == null )
-                {
-                    userDto = buildUserFromTicket( ticket );
-                }
-
-                //create customer
-                gruCustomer = CustomerService.instance(  ).createCustomer( buildCustomer( userDto, strGuidFromTicket ) );
-                AppLogService.info( "New user created the guid : <" + strGuidFromTicket + "> its customer id is : <" +
-                    gruCustomer.getId(  ) + ">" );
-            }
-
-            //update CID
-            ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
-            TicketHome.update( ticket );
-        }
-        else
-        {
-            if ( StringUtils.isEmpty( strGuidFromTicket ) )
-            {
-                if ( StringUtils.isNumeric( strCidFromTicket ) )
-                {
-                    // CASE : cid but no guid:  find customer info in GRU database => try to retrieve guid from customer
-                    gruCustomer = CustomerService.instance(  ).getCustomerByCid( strCidFromTicket );
-                }
-                else
-                {
-                    AppLogService.error( "Provided customerId is not numeric: <" + strCidFromTicket + ">" );
-                }
-
-                if ( gruCustomer != null )
+        
+       
+      
+     gruCustomer = ProvisionningService.processGuidCuidTicketing( strGuidFromTicket, strCidFromTicket, userDto);
+if ( gruCustomer != null )
                 {
                     ticket.setGuid( gruCustomer.getAccountGuid(  ) );
                     TicketHome.update( ticket );
+                    
+                    //update CID
+     ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
+     TicketHome.update( ticket );
+     
+   ticket.setGuid( gruCustomer.getAccountGuid(  ) );
+   TicketHome.update( ticket );
                 }
-                else
-                {
-                    AppLogService.info( "No guid found for user cid : <" + strCidFromTicket + ">" );
-                }
-            }
-        }
+     
+        // CASE no cid
+//        if ( StringUtils.isEmpty( strCidFromTicket ) )
+//        {
+//            if ( !StringUtils.isEmpty( strGuidFromTicket ) )
+//            {
+//                //if guid is provided => we try to retrieve linked customer
+//                gruCustomer = CustomerService.instance(  ).getCustomerByGuid( ticket.getGuid(  ) );
+//                userDto = UserInfoService.instance(  ).getUserInfo( strGuidFromTicket );
+//            }
+//
+//            if ( gruCustomer == null )
+//            {
+//                //customer is unknown / not found => we create it
+//                if ( userDto == null )
+//                {
+//                    userDto = buildUserFromTicket( ticket );
+//                }
+//
+//                //create customer
+//                gruCustomer = CustomerService.instance(  ).createCustomer( buildCustomer( userDto, strGuidFromTicket ) );
+//                AppLogService.info( "New user created the guid : <" + strGuidFromTicket + "> its customer id is : <" +
+//                    gruCustomer.getId(  ) + ">" );
+//            }
+//
+//            //update CID
+//            ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
+//            TicketHome.update( ticket );
+//        }
+//        else
+//        {
+//            if ( StringUtils.isEmpty( strGuidFromTicket ) )
+//            {
+//                if ( StringUtils.isNumeric( strCidFromTicket ) )
+//                {
+//                    // CASE : cid but no guid:  find customer info in GRU database => try to retrieve guid from customer
+//                    gruCustomer = CustomerService.instance(  ).getCustomerByCid( strCidFromTicket );
+//                }
+//                else
+//                {
+//                    AppLogService.error( "Provided customerId is not numeric: <" + strCidFromTicket + ">" );
+//                }
+//
+//                if ( gruCustomer != null )
+//                {
+//                    ticket.setGuid( gruCustomer.getAccountGuid(  ) );
+//                    TicketHome.update( ticket );
+//                }
+//                else
+//                {
+//                    AppLogService.info( "No guid found for user cid : <" + strCidFromTicket + ">" );
+//                }
+//            }
+//        }
 
         return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_CREATE_CUSTOMER, Locale.FRENCH ),
             ( StringUtils.isNotEmpty( ticket.getCustomerId(  ) ) ) ? String.valueOf( ticket.getCustomerId(  ) )
