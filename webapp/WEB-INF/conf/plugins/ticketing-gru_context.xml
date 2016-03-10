@@ -13,9 +13,6 @@
     
     <!-- USER INFO SERVICE -->
   
-    <!-- <bean id="ticketing-gru.userinfoService" class="fr.paris.lutece.plugins.supply.modules.openam.services.OpenAmService" /> 
-      <bean id="ticketing-gru.userinfoService" class="fr.paris.lutece.plugins.ticketing.modules.gru.service.MockUserInfoProvider" /> 
-    -->
     
     <!-- CUSTOMER INFO SERVICE -->
     <bean id="ticketing-gru.customerinfoService" class="fr.paris.lutece.plugins.ticketing.modules.gru.service.LocalCustomerService"/>  
