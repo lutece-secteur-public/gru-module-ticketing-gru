@@ -24,21 +24,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>fr.paris.lutece.plugins</groupId>
-            <artifactId>plugin-ticketing</artifactId>
-            <version>[1.0.0-SNAPSHOT,)</version>
-            <type>lutece-plugin</type>
+            <groupId>fr.paris.lutece</groupId>
+            <artifactId>lutece-core</artifactId>
+            <version>[5.0.0,)</version>
+            <type>lutece-core</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
-            <artifactId>plugin-workflow</artifactId>
-            <version>[4.1.1,)</version>
-            <type>lutece-plugin</type>
-        </dependency>
-        <dependency>
-            <groupId>fr.paris.lutece.plugins</groupId>
-            <artifactId>plugin-gru</artifactId>
-            <version>[0.1.0,)</version>
+            <artifactId>plugin-costumerprovisionning</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <type>lutece-plugin</type>
         </dependency>
         <!-- used for AbstractTicketingTask task dependency -->
