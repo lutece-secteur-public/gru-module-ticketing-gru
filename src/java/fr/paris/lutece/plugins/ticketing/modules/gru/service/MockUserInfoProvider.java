@@ -33,52 +33,23 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-
-import java.util.Locale;
+import fr.paris.lutece.plugins.ticketing.modules.gru.business.dto.UserDTO;
 
 
 /**
- * Ticketing GRU module
+ * MokeUserInfoProvider
  */
-public class TicketingGruPlugin extends Plugin
+public class MockUserInfoProvider implements IUserInfoProvider
 {
-    /**
-     * Name of the Workflow ticketing module
-     */
-    public static final String PLUGIN_NAME = "ticketing-gru";
-
-    /**
-     * Transaction manage bean name for services of this plugin
-     */
-    public static final String BEAN_TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void init(  )
+    public UserDTO getUserInfo( String strId )
     {
-    }
+        UserDTO user = new UserDTO(  );
+        user.setFirstname( "Martin" );
+        user.setLastname( "Dupont" );
+        user.setEmail( "mdupont@domain.com" );
+        user.setUid( strId );
 
-    /**
-     * Get the locale used by this plugin
-     * @param locale The locale preferred by the user
-     * @return The locale used by this plugin
-     */
-    public static Locale getPluginLocale( Locale locale )
-    {
-        return locale;
-    }
-
-    /**
-     * Get the ticketing GRU module
-     *
-     * @return The ticketing GRU module
-     */
-    public static Plugin getPlugin(  )
-    {
-        return PluginService.getPlugin( PLUGIN_NAME );
+        return user;
     }
 }

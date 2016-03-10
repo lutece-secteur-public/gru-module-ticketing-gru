@@ -33,52 +33,49 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-
-import java.util.Locale;
+import fr.paris.lutece.plugins.ticketing.modules.gru.business.dto.UserDTO;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 
 /**
- * Ticketing GRU module
+ *
+ * UserInfoService class
+ *
  */
-public class TicketingGruPlugin extends Plugin
+public final class UserInfoService
 {
-    /**
-     * Name of the Workflow ticketing module
-     */
-    public static final String PLUGIN_NAME = "ticketing-gru";
+    private static final String BEAN_USER_INFO_SERVICE = "ticketing-gru.userinfoService";
+    private static IUserInfoProvider _userInfoProvider;
+    private static UserInfoService _singleton;
 
-    /**
-     * Transaction manage bean name for services of this plugin
-     */
-    public static final String BEAN_TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init(  )
+    /** private constructor */
+    private UserInfoService(  )
     {
     }
 
     /**
-     * Get the locale used by this plugin
-     * @param locale The locale preferred by the user
-     * @return The locale used by this plugin
+     * Return the unique instance
+     * @return The instance
      */
-    public static Locale getPluginLocale( Locale locale )
+    public static UserInfoService instance(  )
     {
-        return locale;
+        if ( _singleton == null )
+        {
+            _singleton = new UserInfoService(  );
+            _userInfoProvider = SpringContextService.getBean( BEAN_USER_INFO_SERVICE );
+        }
+
+        return _singleton;
     }
 
     /**
-     * Get the ticketing GRU module
+     * Gets User info
      *
-     * @return The ticketing GRU module
+     * @param strGuid The GUID
+     * @return user infos
      */
-    public static Plugin getPlugin(  )
+    public UserDTO getUserInfo( String strGuid )
     {
-        return PluginService.getPlugin( PLUGIN_NAME );
+        return (UserDTO) _userInfoProvider.getUserInfo( strGuid );
     }
 }
