@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
-import fr.paris.lutece.plugins.customerprovisionning.business.UserDTO;
-import fr.paris.lutece.plugins.customerprovisionning.services.ProvisionningService;
+
+import fr.paris.lutece.plugins.customerprovisioning.business.UserDTO;
+import fr.paris.lutece.plugins.customerprovisioning.services.ProvisioningService;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -102,7 +103,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         String strCidFromTicket = ticket.getCustomerId(  );
         String strGuidFromTicket = ticket.getGuid(  );
 
-        Customer gruCustomer = ProvisionningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
+        Customer gruCustomer = ProvisioningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
 
         if ( gruCustomer != null && !gruCustomer.getAccountGuid( ).equals( STRING_NULL ) 
                 && !ticket.getGuid( ).equals( gruCustomer.getAccountGuid( ) ) )
