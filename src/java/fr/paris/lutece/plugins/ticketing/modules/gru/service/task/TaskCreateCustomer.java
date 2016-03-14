@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
+import fr.paris.lutece.plugins.customerprovisionning.business.UserDTO;
+import fr.paris.lutece.plugins.customerprovisionning.services.ProvisionningService;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -40,8 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.costumerprovisionning.business.UserDTO;
-import fr.paris.lutece.plugins.costumerprovisionning.services.ProvisionningService;
+
 import fr.paris.lutece.plugins.gru.business.customer.Customer;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
