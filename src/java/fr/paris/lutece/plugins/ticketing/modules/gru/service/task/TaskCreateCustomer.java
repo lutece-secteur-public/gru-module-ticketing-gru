@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 
 /**
@@ -124,14 +125,15 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         {
             TicketHome.update( ticket );
         }
-      
 
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_CREATE_CUSTOMER, Locale.FRENCH ),
+        AppLogService.info( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_CREATE_CUSTOMER, Locale.FRENCH ),
             ( StringUtils.isNotEmpty( ticket.getCustomerId(  ) ) ) ? String.valueOf( ticket.getCustomerId(  ) )
                                                                    : I18nService.getLocalizedString( 
                 MESSAGE_UNKNOWN_ID, Locale.FRENCH ),
             ( StringUtils.isNotEmpty( ticket.getGuid(  ) ) ) ? ticket.getGuid(  )
                                                              : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID,
-                Locale.FRENCH ) );
+                Locale.FRENCH ) ) );
+        
+        return null;
     }
 }
