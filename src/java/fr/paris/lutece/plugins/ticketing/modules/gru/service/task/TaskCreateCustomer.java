@@ -33,23 +33,22 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
-
 import fr.paris.lutece.plugins.customerprovisioning.business.UserDTO;
 import fr.paris.lutece.plugins.customerprovisioning.services.ProvisioningService;
-import java.text.MessageFormat;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
-
 import fr.paris.lutece.plugins.gru.business.customer.Customer;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.text.MessageFormat;
+
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -61,8 +60,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     private static final String MESSAGE_UNKNOWN_ID = "module.ticketing.gru.task_create_customer.unknownId";
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
     private static final String STRING_NULL = "NULL";
-        
-    
+
     /**
      * return a userDTO from ticket value
      * @param ticket ticket used to initialise DTO
@@ -97,43 +95,44 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     {
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        UserDTO userDto =  buildUserFromTicket( ticket );
-        boolean bMustBeUpdated = false ;
-        
-        
+        UserDTO userDto = buildUserFromTicket( ticket );
+        boolean bMustBeUpdated = false;
+
         String strCidFromTicket = ticket.getCustomerId(  );
         String strGuidFromTicket = ticket.getGuid(  );
 
         Customer gruCustomer = ProvisioningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
 
-        if ( gruCustomer != null && !gruCustomer.getAccountGuid( ).equals( STRING_NULL ) 
-                && !ticket.getGuid( ).equals( gruCustomer.getAccountGuid( ) ) )
+        if ( ( gruCustomer != null ) && !gruCustomer.getAccountGuid(  ).equals( STRING_NULL ) &&
+                !ticket.getGuid(  ).equals( gruCustomer.getAccountGuid(  ) ) )
         {
             //guid changed
             ticket.setGuid( gruCustomer.getAccountGuid(  ) );
             bMustBeUpdated = true;
         }
 
-        if ( gruCustomer != null && ( ticket.getCustomerId( ) == null ||  ticket.getCustomerId( ) != String.valueOf( gruCustomer.getId( ) ) ) )
+        if ( ( gruCustomer != null ) &&
+                ( ( ticket.getCustomerId(  ) == null ) ||
+                ( ticket.getCustomerId(  ) != String.valueOf( gruCustomer.getId(  ) ) ) ) )
         {
             //cid changed
             ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
             bMustBeUpdated = true;
         }
-        
+
         if ( bMustBeUpdated )
         {
             TicketHome.update( ticket );
         }
 
         AppLogService.info( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_CREATE_CUSTOMER, Locale.FRENCH ),
-            ( StringUtils.isNotEmpty( ticket.getCustomerId(  ) ) ) ? String.valueOf( ticket.getCustomerId(  ) )
-                                                                   : I18nService.getLocalizedString( 
-                MESSAGE_UNKNOWN_ID, Locale.FRENCH ),
-            ( StringUtils.isNotEmpty( ticket.getGuid(  ) ) ) ? ticket.getGuid(  )
-                                                             : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID,
-                Locale.FRENCH ) ) );
-        
+                ( StringUtils.isNotEmpty( ticket.getCustomerId(  ) ) ) ? String.valueOf( ticket.getCustomerId(  ) )
+                                                                       : I18nService.getLocalizedString( 
+                    MESSAGE_UNKNOWN_ID, Locale.FRENCH ),
+                ( StringUtils.isNotEmpty( ticket.getGuid(  ) ) ) ? ticket.getGuid(  )
+                                                                 : I18nService.getLocalizedString( MESSAGE_UNKNOWN_ID,
+                    Locale.FRENCH ) ) );
+
         return null;
     }
 }
