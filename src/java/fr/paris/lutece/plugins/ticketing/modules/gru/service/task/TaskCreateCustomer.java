@@ -79,6 +79,8 @@ public class TaskCreateCustomer extends AbstractTicketingTask
             user.setUid( ticket.getGuid(  ) );
             user.setCivility( ticket.getUserTitle(  ) );
             user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );
+            user.setFixeTelephoneNumber( ticket.getFixedPhoneNumber( ) );
+           
         }
 
         return user;
