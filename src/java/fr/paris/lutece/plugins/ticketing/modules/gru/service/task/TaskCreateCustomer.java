@@ -61,6 +61,9 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
     private static final String STRING_NULL = "NULL";
 
+    
+    
+    
     /**
      * return a userDTO from ticket value
      * @param ticket ticket used to initialise DTO
@@ -77,10 +80,9 @@ public class TaskCreateCustomer extends AbstractTicketingTask
             user.setLastname( ticket.getLastname(  ) );
             user.setEmail( ticket.getEmail(  ) );
             user.setUid( ticket.getGuid(  ) );
-            user.setCivility( ticket.getUserTitle(  ) );
-            user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );
-            user.setFixeTelephoneNumber( ticket.getFixedPhoneNumber( ) );
-           
+            user.setCivility( ticket.getUserTitle(  ) );        
+            user.setFixedPhoneNumber( ticket.getFixedPhoneNumber( ) );
+            user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );   
         }
 
         return user;
