@@ -104,7 +104,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         Customer gruCustomer = ProvisioningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
 
         if ( ( gruCustomer != null ) && !gruCustomer.getAccountGuid(  ).equals( STRING_NULL ) &&
-                !ticket.getGuid(  ).equals( gruCustomer.getAccountGuid(  ) ) )
+                !gruCustomer.getAccountGuid(  ).equals( ticket.getGuid(  ) ) )
         {
             //guid changed
             ticket.setGuid( gruCustomer.getAccountGuid(  ) );
