@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 import fr.paris.lutece.plugins.customerprovisioning.business.UserDTO;
 import fr.paris.lutece.plugins.customerprovisioning.services.ProvisioningService;
 import fr.paris.lutece.plugins.gru.business.customer.Customer;
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -108,7 +108,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         Customer gruCustomer = ProvisioningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
 
         if ( ( gruCustomer != null ) && !gruCustomer.getAccountGuid(  ).equals( STRING_NULL ) &&
-                !ticket.getGuid(  ).equals( gruCustomer.getAccountGuid(  ) ) )
+                !gruCustomer.getAccountGuid(  ).equals( ticket.getGuid(  ) ) )
         {
             //guid changed
             ticket.setGuid( gruCustomer.getAccountGuid(  ) );
