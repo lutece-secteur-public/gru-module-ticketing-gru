@@ -117,7 +117,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
 
         if ( ( gruCustomer != null ) &&
                 ( ( ticket.getCustomerId(  ) == null ) ||
-                ( ticket.getCustomerId(  ) != String.valueOf( gruCustomer.getId(  ) ) ) ) )
+                ( !ticket.getCustomerId(  ).equals( String.valueOf( gruCustomer.getId(  ) ) ) ) ) )
         {
             //cid changed
             ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
