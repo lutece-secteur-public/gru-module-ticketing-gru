@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
 import fr.paris.lutece.plugins.customerprovisioning.business.UserDTO;
 import fr.paris.lutece.plugins.customerprovisioning.services.ProvisioningService;
-import fr.paris.lutece.plugins.gru.business.customer.Customer;
+import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
