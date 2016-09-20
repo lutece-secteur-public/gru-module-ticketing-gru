@@ -61,12 +61,11 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
     private static final String STRING_NULL = "NULL";
 
-    
-    
-    
     /**
      * return a userDTO from ticket value
-     * @param ticket ticket used to initialise DTO
+     *
+     * @param ticket
+     *            ticket used to initialise DTO
      * @return userDto initialized wit ticket infos
      */
     private static UserDTO buildUserFromTicket( Ticket ticket )
@@ -80,9 +79,9 @@ public class TaskCreateCustomer extends AbstractTicketingTask
             user.setLastname( ticket.getLastname(  ) );
             user.setEmail( ticket.getEmail(  ) );
             user.setUid( ticket.getGuid(  ) );
-            user.setCivility( ticket.getUserTitle(  ) );        
-            user.setFixedPhoneNumber( ticket.getFixedPhoneNumber( ) );
-            user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );   
+            user.setCivility( ticket.getUserTitle(  ) );
+            user.setFixedPhoneNumber( ticket.getFixedPhoneNumber(  ) );
+            user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );
         }
 
         return user;
@@ -110,7 +109,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         if ( ( gruCustomer != null ) && !gruCustomer.getAccountGuid(  ).equals( STRING_NULL ) &&
                 !gruCustomer.getAccountGuid(  ).equals( ticket.getGuid(  ) ) )
         {
-            //guid changed
+            // guid changed
             ticket.setGuid( gruCustomer.getAccountGuid(  ) );
             bMustBeUpdated = true;
         }
@@ -119,7 +118,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
                 ( ( ticket.getCustomerId(  ) == null ) ||
                 ( !ticket.getCustomerId(  ).equals( String.valueOf( gruCustomer.getId(  ) ) ) ) ) )
         {
-            //cid changed
+            // cid changed
             ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
             bMustBeUpdated = true;
         }
