@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,20 +33,26 @@
  */
 package fr.paris.lutece.plugins.ticketing.modules.gru.service.task;
 
-import fr.paris.lutece.plugins.customerprovisioning.business.UserDTO;
-import fr.paris.lutece.plugins.customerprovisioning.services.ProvisioningService;
-import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.AuthorDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.service.IdentityService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,35 +62,91 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskCreateCustomer extends AbstractTicketingTask
 {
+    // Messages
     private static final String MESSAGE_CREATE_CUSTOMER = "module.ticketing.gru.task_create_customer.info";
     private static final String MESSAGE_UNKNOWN_ID = "module.ticketing.gru.task_create_customer.unknownId";
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
-    private static final String STRING_NULL = "NULL";
+
+    // Properties
+    private static final String PROPERTIES_APPLICATION_CODE = "ticketing.gru.application.code";
+    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN = "ticketing.gru.attribute.user.name.given";
+    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY = "ticketing.gru.attribute.user.name.family";
+    private static final String PROPERTIES_ATTRIBUTE_USER_GENDER = "ticketing.gru.attribute.user.gender";
+    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL = "ticketing.gru.attribute.user.home-info.online.email";
+    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = "ticketing.gru.attribute.user.home-info.telecom.telephone.number";
+    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = "ticketing.gru.attribute.user.home-info.telecom.mobile.number";
+    private static final String APPLICATION_CODE = AppPropertiesService.getProperty( PROPERTIES_APPLICATION_CODE );
+    private static final String ATTRIBUTE_IDENTITY_NAME_GIVEN = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN );
+    private static final String ATTRIBUTE_IDENTITY_NAME_FAMILLY = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY );
+    private static final String ATTRIBUTE_IDENTITY_GENDER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_GENDER );
+    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
+    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
+    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
+
+    // Beans
+    private static final String BEAN_IDENTITYSTORE_SERVICE = "ticketing-gru.identitystore.service";
+
+    // Services
+    private IdentityService _identityService;
 
     /**
-     * return a userDTO from ticket value
+     * Default constructor
+     */
+    public TaskCreateCustomer(  )
+    {
+        super(  );
+        _identityService = SpringContextService.getBean( BEAN_IDENTITYSTORE_SERVICE );
+    }
+
+    /**
+     * Builds a {@link IdentityDto} from the specified ticket
      *
      * @param ticket
-     *            ticket used to initialise DTO
-     * @return userDto initialized wit ticket infos
+     *            ticket used to initialize the identity
+     * @return the identity
      */
-    private static UserDTO buildUserFromTicket( Ticket ticket )
+    private static IdentityDto buildIdentity( Ticket ticket )
     {
-        UserDTO user = null;
+        IdentityDto identityDto = new IdentityDto(  );
+        Map<String, AttributeDto> mapAttributes = new HashMap<String, AttributeDto>(  );
 
         if ( ticket != null )
         {
-            user = new UserDTO(  );
-            user.setFirstname( ticket.getFirstname(  ) );
-            user.setLastname( ticket.getLastname(  ) );
-            user.setEmail( ticket.getEmail(  ) );
-            user.setUid( ticket.getGuid(  ) );
-            user.setCivility( ticket.getUserTitle(  ) );
-            user.setFixedPhoneNumber( ticket.getFixedPhoneNumber(  ) );
-            user.setTelephoneNumber( ticket.getMobilePhoneNumber(  ) );
+            identityDto.setConnectionId( ticket.getGuid(  ) );
+
+            if ( ticket.getCustomerId(  ) != null )
+            {
+                identityDto.setCustomerId( Integer.parseInt( ticket.getCustomerId(  ) ) );
+            }
+
+            identityDto.setAttributes( mapAttributes );
+
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_GIVEN, ticket.getFirstname(  ) );
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_FAMILLY, ticket.getLastname(  ) );
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_GENDER, ticket.getUserTitle(  ) );
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL, ticket.getEmail(  ) );
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_TELEPHONE_NUMBER,
+                ticket.getFixedPhoneNumber(  ) );
+            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_MOBILE_NUMBER,
+                ticket.getMobilePhoneNumber(  ) );
         }
 
-        return user;
+        return identityDto;
+    }
+
+    /**
+     * Sets an attribute into the specified identity
+     * @param identityDto the identity
+     * @param strCode the attribute code
+     * @param strValue the attribute value
+     */
+    private static void setAttribute( IdentityDto identityDto, String strCode, String strValue )
+    {
+        AttributeDto attributeDto = new AttributeDto(  );
+        attributeDto.setKey( strCode );
+        attributeDto.setValue( strValue );
+
+        identityDto.getAttributes(  ).put( attributeDto.getKey(  ), attributeDto );
     }
 
     @Override
@@ -98,28 +160,35 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     {
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        UserDTO userDto = buildUserFromTicket( ticket );
         boolean bMustBeUpdated = false;
 
-        String strCidFromTicket = ticket.getCustomerId(  );
-        String strGuidFromTicket = ticket.getGuid(  );
+        IdentityChangeDto identityChangeDto = new IdentityChangeDto(  );
+        IdentityDto identityDto = buildIdentity( ticket );
 
-        Customer gruCustomer = ProvisioningService.processGuidCuid( strGuidFromTicket, strCidFromTicket, userDto );
+        identityChangeDto.setIdentity( identityDto );
 
-        if ( ( gruCustomer != null ) && !gruCustomer.getAccountGuid(  ).equals( STRING_NULL ) &&
-                !gruCustomer.getAccountGuid(  ).equals( ticket.getGuid(  ) ) )
+        AuthorDto authorDto = new AuthorDto(  );
+        authorDto.setApplicationCode( APPLICATION_CODE );
+
+        identityChangeDto.setAuthor( authorDto );
+
+        identityDto = _identityService.createIdentity( identityChangeDto, StringUtils.EMPTY );
+
+        String strUpdatedGuid = identityDto.getConnectionId(  );
+
+        if ( ( strUpdatedGuid != null ) && !strUpdatedGuid.equals( ticket.getGuid(  ) ) )
         {
             // guid changed
-            ticket.setGuid( gruCustomer.getAccountGuid(  ) );
+            ticket.setGuid( strUpdatedGuid );
             bMustBeUpdated = true;
         }
 
-        if ( ( gruCustomer != null ) &&
-                ( ( ticket.getCustomerId(  ) == null ) ||
-                ( !ticket.getCustomerId(  ).equals( String.valueOf( gruCustomer.getId(  ) ) ) ) ) )
+        String strUpdatedCid = String.valueOf( identityDto.getCustomerId(  ) );
+
+        if ( !strUpdatedCid.equals( ticket.getCustomerId(  ) ) )
         {
             // cid changed
-            ticket.setCustomerId( String.valueOf( gruCustomer.getId(  ) ) );
+            ticket.setCustomerId( strUpdatedCid );
             bMustBeUpdated = true;
         }
 
