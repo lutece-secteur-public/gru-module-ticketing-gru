@@ -114,7 +114,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         {
             identityDto.setConnectionId( ticket.getGuid(  ) );
 
-            if ( ticket.getCustomerId(  ) != null )
+            if ( !StringUtils.isEmpty( ticket.getCustomerId(  ) ) )
             {
                 identityDto.setCustomerId( Integer.parseInt( ticket.getCustomerId(  ) ) );
             }
