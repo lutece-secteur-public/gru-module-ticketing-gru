@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.web.service.IdentityService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -49,7 +50,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -66,22 +66,6 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     private static final String MESSAGE_CREATE_CUSTOMER = "module.ticketing.gru.task_create_customer.info";
     private static final String MESSAGE_UNKNOWN_ID = "module.ticketing.gru.task_create_customer.unknownId";
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
-
-    // Properties
-    private static final String PROPERTIES_APPLICATION_CODE = "ticketing.gru.application.code";
-    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN = "ticketing.gru.attribute.user.name.given";
-    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY = "ticketing.gru.attribute.user.name.family";
-    private static final String PROPERTIES_ATTRIBUTE_USER_GENDER = "ticketing.gru.attribute.user.gender";
-    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL = "ticketing.gru.attribute.user.home-info.online.email";
-    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = "ticketing.gru.attribute.user.home-info.telecom.telephone.number";
-    private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = "ticketing.gru.attribute.user.home-info.telecom.mobile.number";
-    private static final String APPLICATION_CODE = AppPropertiesService.getProperty( PROPERTIES_APPLICATION_CODE );
-    private static final String ATTRIBUTE_IDENTITY_NAME_GIVEN = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN );
-    private static final String ATTRIBUTE_IDENTITY_NAME_FAMILLY = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY );
-    private static final String ATTRIBUTE_IDENTITY_GENDER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_GENDER );
-    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
-    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
-    private static final String ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
 
     // Beans
     private static final String BEAN_IDENTITYSTORE_SERVICE = "ticketing-gru.identitystore.service";
@@ -120,14 +104,23 @@ public class TaskCreateCustomer extends AbstractTicketingTask
             }
 
             identityDto.setAttributes( mapAttributes );
+            
+            try
+            {
+                String strIdUserTitle = Integer.toString( ticket.getIdUserTitle(  ) );
+                setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_GENDER, strIdUserTitle );
+            }
+            catch ( NumberFormatException e )
+            {
+                // The attribute gender is not provided
+            }
 
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_GIVEN, ticket.getFirstname(  ) );
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_FAMILLY, ticket.getLastname(  ) );
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_GENDER, ticket.getUserTitle(  ) );
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL, ticket.getEmail(  ) );
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_TELEPHONE_NUMBER,
+            setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_NAME_GIVEN, ticket.getFirstname(  ) );
+            setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_NAME_PREFERRED_NAME, ticket.getLastname(  ) );
+            setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL, ticket.getEmail(  ) );
+            setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_TELEPHONE_NUMBER,
                 ticket.getFixedPhoneNumber(  ) );
-            setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_MOBILE_NUMBER,
+            setAttribute( identityDto, TicketingConstants.ATTRIBUTE_IDENTITY_HOMEINFO_TELECOM_MOBILE_NUMBER,
                 ticket.getMobilePhoneNumber(  ) );
         }
 
@@ -168,7 +161,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
         identityChangeDto.setIdentity( identityDto );
 
         AuthorDto authorDto = new AuthorDto(  );
-        authorDto.setApplicationCode( APPLICATION_CODE );
+        authorDto.setApplicationCode( TicketingConstants.APPLICATION_CODE );
 
         identityChangeDto.setAuthor( authorDto );
 
