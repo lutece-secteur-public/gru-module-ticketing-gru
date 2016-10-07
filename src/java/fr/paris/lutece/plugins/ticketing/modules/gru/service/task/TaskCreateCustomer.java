@@ -45,7 +45,6 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractT
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -165,7 +164,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
 
         identityChangeDto.setAuthor( authorDto );
 
-        identityDto = _identityService.createIdentity( identityChangeDto, StringUtils.EMPTY );
+        identityDto = _identityService.createIdentity( identityChangeDto );
 
         String strUpdatedGuid = identityDto.getConnectionId(  );
 
