@@ -37,18 +37,18 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.AuthorDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.service.IdentityService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.service.identity.TicketingIdentityService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.AbstractTicketingTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -65,21 +65,6 @@ public class TaskCreateCustomer extends AbstractTicketingTask
     private static final String MESSAGE_CREATE_CUSTOMER = "module.ticketing.gru.task_create_customer.info";
     private static final String MESSAGE_UNKNOWN_ID = "module.ticketing.gru.task_create_customer.unknownId";
     private static final String MESSAGE_CREATE_CUSTOMER_TASK = "module.ticketing.gru.task_create_customer.title";
-
-    // Beans
-    private static final String BEAN_IDENTITYSTORE_SERVICE = "ticketing-gru.identitystore.service";
-
-    // Services
-    private IdentityService _identityService;
-
-    /**
-     * Default constructor
-     */
-    public TaskCreateCustomer(  )
-    {
-        super(  );
-        _identityService = SpringContextService.getBean( BEAN_IDENTITYSTORE_SERVICE );
-    }
 
     /**
      * Builds a {@link IdentityDto} from the specified ticket
@@ -103,7 +88,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
             }
 
             identityDto.setAttributes( mapAttributes );
-            
+
             try
             {
                 String strIdUserTitle = Integer.toString( ticket.getIdUserTitle(  ) );
@@ -164,7 +149,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
 
         identityChangeDto.setAuthor( authorDto );
 
-        identityDto = _identityService.createIdentity( identityChangeDto );
+        identityDto = TicketingIdentityService.getInstance(  ).getIdentityService(  ).createIdentity( identityChangeDto );
 
         String strUpdatedGuid = identityDto.getConnectionId(  );
 

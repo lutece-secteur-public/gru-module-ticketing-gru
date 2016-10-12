@@ -20,18 +20,4 @@
         p:taskForAutomaticAction="true" />
     <bean id="ticketing-gru.createCustomerTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="ticketing-gru.taskTypeCreateCustomer" />
-    
-    <!-- IDENTITYSTORE BEAN -->
-    <bean id="ticketing-gru.identitystore.simpleRestTransport" class="fr.paris.lutece.plugins.identitystore.web.service.SimpleRestTransport" />
-    <bean id="ticketing-gru.identitystore.httpTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
-        <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
-        </property>
-        <property name="httpTransport">
-            <ref bean="ticketing-gru.identitystore.simpleRestTransport"/>
-        </property>
-    </bean>       
-    <bean id="ticketing-gru.identitystore.service" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-        <constructor-arg ref="ticketing-gru.identitystore.httpTransport"/>
-    </bean>
 </beans>
