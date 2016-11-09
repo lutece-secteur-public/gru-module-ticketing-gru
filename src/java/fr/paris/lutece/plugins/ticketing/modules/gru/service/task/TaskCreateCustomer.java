@@ -84,7 +84,7 @@ public class TaskCreateCustomer extends AbstractTicketingTask
 
             if ( !StringUtils.isEmpty( ticket.getCustomerId(  ) ) )
             {
-                identityDto.setCustomerId( Integer.parseInt( ticket.getCustomerId(  ) ) );
+                identityDto.setCustomerId( ticket.getCustomerId(  ) );
             }
 
             identityDto.setAttributes( mapAttributes );
