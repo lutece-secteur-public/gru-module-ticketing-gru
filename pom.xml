@@ -26,20 +26,20 @@
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
-            <version>[5.0.0,)</version>
+            <version>[5.0.0,7.9.9)</version>
             <type>lutece-core</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>library-identitystore</artifactId>
-            <version>[1.1.0,)</version>
+            <version>[1.1.0,3.9.9)</version>
             <type>jar</type>
         </dependency>
         <!-- used for AbstractTicketingTask task dependency -->
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>module-workflow-ticketing</artifactId>
-            <version>[1.1.0,)</version>
+            <version>[1.1.0,4.9.9)</version>
             <type>lutece-plugin</type>
         </dependency>
     </dependencies>
